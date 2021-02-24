@@ -104,4 +104,4 @@ dist
 .tern-port
 
 .idea
-*.idea
+/Users/jonathanmenna/Documents/Programs/NodePrograms/homework2/.idea
