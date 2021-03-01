@@ -1,14 +1,21 @@
+const Express = require('express');
+const BodyParser = require('body-parser');
+const Mongoose = require('mongoose');
+const Product = require('../models/product');
 const userService = require('../services/services');
 
-exports.getUsers = async function (req, res, next) {
-  // Validate request parameters, queries using express-validator
+const app = Express();
+app.use(BodyParser.json());
 
-  const page = req.params.page ? req.params.page : 1;
-  const limit = req.params.limit ? req.params.limit : 10;
+const doActionThatMightFailValidation = async (request, response, action) => {
   try {
-    const users = await userService.getUsers({}, page, limit);
-    return res.status(200).json({ status: 200, data: users, message: 'Succesfully Users Retrieved' });
+    await action();
   } catch (e) {
-    return res.status(400).json({ status: 400, message: e.message });
+    response.sendStatus(
+      e.code === 11000
+      || e.stack.includes('ValidationError')
+      || (e.reason !== undefined && e.reason.code === 'ERR_ASSERTION')
+        ? 400 : 500,
+    );
   }
 };
