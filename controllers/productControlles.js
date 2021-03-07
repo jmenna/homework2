@@ -1,10 +1,11 @@
 const express = require('express');
 const BodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const Product = require('../models/product');
+const productServiceInstance = require('../services/ProductServices');
 
 const app = express();
 app.use(BodyParser.json());
+const ProductServiceInstance = new ProductService();
 
 const doActionThatMightFailValidation = async (request, response, action) => {
   try {
@@ -19,13 +20,21 @@ const doActionThatMightFailValidation = async (request, response, action) => {
   }
 };
 
-app.get('/products', async (request, response) => {(request, response) {
+module.exports = { getProducts };
+
+/**
+ * @description Create a cord with the provided body
+ * @param req {object} Express req object
+ * @param res {object} Express res object
+ * @returns {Promise<*>}
+ */
+async function getProducts(req, res) {
   try {
     // We only pass the body object, never the req object
-    const createdCord = await PostServiceInstance.create(request.body);
-    return response.send(createdCord);
+    const getProducts = await ProductServiceInstance.get(req.body);
+    return res.send(getProducts);
   } catch (err) {
-    response.status(500).send(err);
+    res.status(500).send(err);
   }
 }
 
@@ -48,7 +57,7 @@ app.get('/products/:sku', async (request, response) => {
 
 app.get('/products/:name', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    const getResult = await Product.findOne({ name: request.params.name }).select('-_id -__v');
+    const getResult = await Product.findOne({ sku: request.params.name }).select('-_id -__v');
     if (getResult != null) {
       response.json(getResult);
     } else {
@@ -59,7 +68,7 @@ app.get('/products/:name', async (request, response) => {
 
 app.get('/products/:quantity', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    const getResult = await Product.findOne({ quantity: request.params.quantity }).select('-_id -__v');
+    const getResult = await Product.findOne({ sku: request.params.quantity }).select('-_id -__v');
     if (getResult != null) {
       response.json(getResult);
     } else {
@@ -70,7 +79,7 @@ app.get('/products/:quantity', async (request, response) => {
 
 app.get('/products/:price', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    const getResult = await Product.findOne({ price: request.params.price }).select('-_id -__v');
+    const getResult = await Product.findOne({ sku: request.params.price }).select('-_id -__v');
     if (getResult != null) {
       response.json(getResult);
     } else {
@@ -96,6 +105,30 @@ app.delete('/products/:sku', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
     response.sendStatus((await Product.deleteOne({
       sku: request.params.sku,
+    })).deletedCount > 0 ? 200 : 404);
+  });
+});
+
+app.delete('/products/:name', async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    response.sendStatus((await Product.deleteOne({
+      sku: request.params.name,
+    })).deletedCount > 0 ? 200 : 404);
+  });
+});
+
+app.delete('/products/:quantity', async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    response.sendStatus((await Product.deleteOne({
+      sku: request.params.quantity,
+    })).deletedCount > 0 ? 200 : 404);
+  });
+});
+
+app.delete('/products/:price', async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    response.sendStatus((await Product.deleteOne({
+      sku: request.params.price,
     })).deletedCount > 0 ? 200 : 404);
   });
 });
@@ -131,7 +164,7 @@ app.patch('/products/:sku', async (request, response) => {
 });
 
 (async () => {
-  await Mongoose.connect('mongodb+srv://admin:admin@cluster0-cde82.mongodb.net/mongodb?retryWrites=true&w=majority', {
+  await Mongoose.connect('mongodb+srv://admin:<U7CWgya36gFJg57>@cluster0.vnnkb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
