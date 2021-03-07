@@ -1,12 +1,9 @@
-const Express = require('express');
+const express = require('express');
 const BodyParser = require('body-parser');
-const Mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const Product = require('../models/product');
 
-const Product = require('./models/product');
-const User = require('./models/user');
-
-const app = Express();
-
+const app = express();
 app.use(BodyParser.json());
 
 const doActionThatMightFailValidation = async (request, response, action) => {
@@ -15,22 +12,65 @@ const doActionThatMightFailValidation = async (request, response, action) => {
   } catch (e) {
     response.sendStatus(
       e.code === 11000
-      || e.stack.includes('ValidationError')
-      || (e.reason !== undefined && e.reason.code === 'ERR_ASSERTION')
+        || e.stack.includes('ValidationError')
+        || (e.reason !== undefined && e.reason.code === 'ERR_ASSERTION')
         ? 400 : 500,
     );
   }
 };
 
+app.get('/products', async (request, response) => {(request, response) {
+  try {
+    // We only pass the body object, never the req object
+    const createdCord = await PostServiceInstance.create(request.body);
+    return response.send(createdCord);
+  } catch (err) {
+    response.status(500).send(err);
+  }
+}
+
 app.get('/products', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    response.json(await Product.find(request.query).select('-_id -__v'));
+    response.json();
   });
 });
 
 app.get('/products/:sku', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
     const getResult = await Product.findOne({ sku: request.params.sku }).select('-_id -__v');
+    if (getResult != null) {
+      response.json(getResult);
+    } else {
+      response.sendStatus(404);
+    }
+  });
+});
+
+app.get('/products/:name', async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    const getResult = await Product.findOne({ name: request.params.name }).select('-_id -__v');
+    if (getResult != null) {
+      response.json(getResult);
+    } else {
+      response.sendStatus(404);
+    }
+  });
+});
+
+app.get('/products/:quantity', async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    const getResult = await Product.findOne({ quantity: request.params.quantity }).select('-_id -__v');
+    if (getResult != null) {
+      response.json(getResult);
+    } else {
+      response.sendStatus(404);
+    }
+  });
+});
+
+app.get('/products/:price', async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    const getResult = await Product.findOne({ price: request.params.price }).select('-_id -__v');
     if (getResult != null) {
       response.json(getResult);
     } else {
