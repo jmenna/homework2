@@ -1,14 +1,26 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const Express = require('express');
 const bodyParser = require('body-parser');
-const Product = require('./models/product.js');
-const User = require('./models/user.js');
+const Product = require('./services/databaseServices.js');
 
 const app = Express();
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
-const doActionThatMightFailValidation = async (request, response, action) => {
+app.get('/products', async (request, response) => {
+  await Product.getAll(request, response);
+});
+
+app.get('/products/:sku', async (request, response) => {
+  const getResult = await Product.getOne({ sku: request.params.sku });
+  if (getResult != null) {
+    response.json(getResult);
+  } else {
+    response.sendStatus(404);
+  }
+});
+
+/* const doActionThatMightFailValidation = async (request, response, action) => {
   try {
     await action();
   } catch (e) {
@@ -30,7 +42,7 @@ app.get('/products', async (request, response) => {
 
 app.get('/products/:sku', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    const getResult = await Product.findOne({ sku: request.params.sku }).select('-_id -__v');
+    const getResult = await Product.getOne({ sku: request.params.sku }).select('-_id -__v');
     if (getResult != null) {
       response.json(getResult);
     } else {
@@ -157,16 +169,16 @@ app.patch('/user/:ssn', async (request, response) => {
       response.sendStatus(404);
     }
   });
-});
+}); */
 
-(async () => {
+/* (async () => {
   await mongoose.connect('mongodb+srv://admin:U7CWgya36gFJg57@cluster0.vnnkb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
     useCreateIndex: true,
   });
-})();
+})(); */
 
 app.listen(8080, () => {
   console.log('Server is running on port 8080.');
