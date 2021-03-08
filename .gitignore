@@ -106,3 +106,4 @@ dist
 .idea
 .DS_Store
 references.txt
+.vscode/launch.json

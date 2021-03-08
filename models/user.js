@@ -26,6 +26,7 @@ module.exports = mongoose.model('User', new mongoose.Schema({
       message: (props) => `${props.value} is not a valid phone number!`,
     },
   },
+}, {
   toJSON: {
     getters: true,
     virtuals: false,
