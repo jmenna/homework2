@@ -32,7 +32,7 @@ app.getPhone = ('/users:phoneNumber', async function (request) {
   return getResult;
 });
 
-app.postUsers = ('/users', async function (request) {
+exports.postUsers = ('/users', async function (request) {
   const getResult = new User(request.body).save();
   return getResult;
 });
@@ -85,3 +85,7 @@ app.patchUsers = ('/users:ssn', async function (request) {
     useCreateIndex: true,
   });
 })();
+
+ app.listen(8080, () => {
+  console.log('Server is running on port 8080.');
+}); 
