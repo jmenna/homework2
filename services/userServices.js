@@ -85,7 +85,3 @@ app.patchUsers = ('/users:ssn', async function (request) {
     useCreateIndex: true,
   });
 })();
-
- app.listen(8080, () => {
-  console.log('Server is running on port 8080.');
-}); 

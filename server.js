@@ -67,7 +67,7 @@ app.get('/products:price', async (request, response) => {
 
 app.post('/products', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    await Product.postProducts(request.body);
+    Product.postProducts(request.body);
     response.sendStatus(201);
   });
 });
@@ -266,4 +266,8 @@ app.patch('/users/:ssn', async (request, response) => {
       response.sendStatus(404);
     }
   });
+});
+
+app.listen(8080, () => {
+  console.log('Server is running on port 8080.');
 });

@@ -2,10 +2,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const Express = require('express');
 const Product = require('../models/product.js');
-const User = require('../models/user.js');
 
 const app = Express();
-app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
 app.getSKU = ('/products:sku', async function (request) {
